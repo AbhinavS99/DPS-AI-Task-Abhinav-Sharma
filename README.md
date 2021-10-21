@@ -10,11 +10,11 @@
 ---
 
 ## Description of files
-1. [DPS_Task_Analysis.ipynb](https://github.com/AbhinavS99/DPS-AI-Task-Abhinav-Sharma/blob/main/DPS_Task_Analysis.ipynb) &#8594; The notebook contains data preprocessing used for the final trainer and the two models tried instead of the one given in tutorials. The two models are as follows:
+1. [DPS_Task_Analysis.ipynb](https://github.com/AbhinavS99/DPS-AI-Task-Abhinav-Sharma/blob/main/DPS_Task_Analysis.ipynb) &#8594; The notebook contains data preprocessing used for the final trainer and the two models tried besides of the one given in tutorial. The two models are as follows:
     *  Linear Regression Model &#8594; A simple linear regression model implemented in tensorflow.
     *  Dense Neural Network &#8594; A dense neural network with architecture Dense(64, relu)||Dense(32, relu)||Dense(16, relu)||Dense(4, relu)||Dense(1, relu)
     *  After analysis **Dense Neural Network** performed **better**, thus has been used in the final deployed endpoint.
-    *  **Loss Plots** are present in the notebook and are therefore **not being separately attached**.
+    *  **Loss Plots and Loss Statistics** are present in the notebook and are therefore **not being separately attached in README**.
   
 2. [mpg/Dockerfile](https://github.com/AbhinavS99/DPS-AI-Task-Abhinav-Sharma/blob/main/mpg/Dockerfile) &#8594; Dockerfile, to build the container registery.
 
