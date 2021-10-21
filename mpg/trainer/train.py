@@ -11,67 +11,76 @@ from tensorflow import keras
 from tensorflow.keras import layers
 print(tf.__version__)
 
+
 BUCKET = 'gs://abhinav-dps-ai-bucket'
 
-url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data'
-col_names = ['MPG', 'Cylinders', 'Displacement', 'Horsepower', 'Weight',
+
+dataset_path = keras.utils.get_file("auto-mpg.data", "http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data")
+
+column_names = ['MPG','Cylinders','Displacement','Horsepower','Weight',
                 'Acceleration', 'Model Year', 'Origin']
 
-# Getting the dataset
-dataset = pd.read_csv(url, names=col_names, na_values='?', comment='\t', sep=' ', skipinitialspace=True)
+dataset = pd.read_csv(dataset_path, names=column_names,
+                      na_values = "?", comment='\t',
+                      sep=" ", skipinitialspace=True)
+
 
 # Dropping missing values
 dataset = dataset.dropna()
 
 # Origin is Categorical, thus creating dummy variables
-dataset['Origin'] = dataset['Origin'].map({1: '1', 2: '2', 3: '3'})
-dataset = pd.get_dummies(dataset, columns=['Origin'])
+dataset['Origin'] = dataset['Origin'].map({1: 'USA', 2: 'Europe', 3: 'Japan'})
+
+dataset = pd.get_dummies(dataset, prefix='', prefix_sep='')
 
 # Creating train-test split
-train_dataset = dataset.sample(frac=0.8, random_state=0)
+train_dataset = dataset.sample(frac=0.8,random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
 
-
+# Inspecting stats of train split
 train_stats = train_dataset.describe()
 train_stats.pop("MPG")
 train_stats = train_stats.transpose()
-train_stats
+
+def norm(x):
+    return (x - train_stats['mean']) / train_stats['std']
 
 train_labels = train_dataset.pop('MPG')
 test_labels = test_dataset.pop('MPG')
 
-def norm(x):
-    return (x - train_stats['mean'])/train_stats['std']
 
-train_dataset = norm(train_dataset)
-test_dataset = norm(test_dataset)
+# Normalize the train and the test dataset
+normed_train_data = norm(train_dataset)
+normed_test_data = norm(test_dataset)
+
 
 def build_model():
-    # Architecture -> normalization_layer || Dense(32, Relu) || Dense(64, Relu) || Dense(32, Relu) || Dense(1)
-    model = keras.Sequential([
-          layers.Dense(32, activation='relu'),
-          layers.Dense(64, activation='relu'),
-          layers.Dense(32, activation='relu'),
-          layers.Dense(1)
-    ])
-    
-    model.compile(loss='mean_absolute_error',
-        optimizer=tf.keras.optimizers.Adam(0.001)
-    )
-    
-    return model
+   model = keras.Sequential([
+     layers.Dense(64, activation='relu', input_shape=[len(train_dataset.keys())]),
+     layers.Dense(32, activation='relu'),
+     layers.Dense(16, activation='relu'),
+     layers.Dense(4, activation='relu'),
+     layers.Dense(1)
+   ])
+
+   optimizer = tf.keras.optimizers.RMSprop(0.001)
+
+   model.compile(loss='mse',
+                optimizer=optimizer,
+                metrics=['mae', 'mse'])
+   return model
 
 model = build_model()
-EPOCHS = 100
 
+EPOCHS = 1000
+
+# The patience parameter is the amount of epochs to check for improvement
 early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 
-history = model.fit(
-    train_dataset,
-    train_labels,
-    validation_split=0.2,
-    verbose=1, 
-    epochs=100,
-    callbacks=[early_stop]
-)
+early_history = model.fit(normed_train_data, train_labels, 
+                    epochs=EPOCHS, validation_split = 0.2, 
+                    callbacks=[early_stop])
+
+
+# Export model and save to GCS
 model.save(BUCKET + '/mpg/model')
