@@ -55,7 +55,7 @@ Training|
 [https://us-central1-aiplatform.googleapis.com/v1/projects/538537901097/locations/us-central1/endpoints/329334518844489728](https://us-central1-aiplatform.googleapis.com/v1/projects/538537901097/locations/us-central1/endpoints/329334518844489728)
 
 ## Link to end to end Video
-[Link]()
+[Link](https://drive.google.com/file/d/1Zeq9Hdh32qq1zXqnp69rz1eXQJ4Yoe1U/view?usp=sharing)
 
 ## Bonus Component
 * For Bonus both **custom model** and **explanantion video** have been added.
