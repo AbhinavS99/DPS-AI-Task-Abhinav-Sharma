@@ -51,7 +51,8 @@ Training|
 
 9. After the training is complete deploy the model endpoint for making predictions
 
-**Model Endpoint : projects/538537901097/locations/us-central1/endpoints/329334518844489728**
+**Model Endpoint : projects/538537901097/locations/us-central1/endpoints/329334518844489728**   
+[https://us-central1-aiplatform.googleapis.com/v1/projects/538537901097/locations/us-central1/endpoints/329334518844489728](https://us-central1-aiplatform.googleapis.com/v1/projects/538537901097/locations/us-central1/endpoints/329334518844489728)
 
 ## Link to end to end Video
 [Link]()
